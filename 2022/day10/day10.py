@@ -1,4 +1,3 @@
-import numpy as np
 
 ops = [line.strip().split() for line in open("input#10.txt").readlines()]
 
