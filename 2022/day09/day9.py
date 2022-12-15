@@ -18,7 +18,7 @@ def sign(a, b):
 
 def update_pos(tail, head, is_last=False):
     while abs(tail[0] - head[0]) > 1 or abs(tail[1] - head[1]) > 1:
-        # print(grid)
+        # print(cave_floor)
         if tail[0] == head[0]:
             tail[1] += sign(head[1], tail[1])
         elif tail[1] == head[1]:
