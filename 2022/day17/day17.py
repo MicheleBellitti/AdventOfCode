@@ -1,150 +1,182 @@
-from enum import Enum
-from itertools import cycle
-
-class Rocks(Enum):
-    HORIZONTAL_LINE = [[0, 2], [0, 3], [0, 4], [0, 5]]
-    VERTICAL_LINE = [[0, 2], [-1, 2], [-2, 2], [-3, 2]]
-    STAR = [[0, 3], [-1, 2], [-1, 3], [-1, 4], [-2, 3]]
-    SQUARE = [[0, 2], [0, 3], [-1, 2], [-1, 3]]
-    INVERTED_L = [[0, 2], [0, 3], [0, 4], [-1, 4], [-2, 4]]
+#from time import perf_counter
+import math
+from time import time as perf_counter
+from collections import defaultdict
 
 
-class Directions(Enum):
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+def profiler(method):
+    def wrapper_method(*arg, **kw):
+        t = perf_counter()
+        ret = method(*arg, **kw)
+        print('Method ' + method.__name__ + ' took : ' +
+              "{:2.5f}".format(perf_counter()-t) + ' sec')
+        return ret
+    return wrapper_method
 
 
-RIGHT_PART_INDEX = {Rocks.HORIZONTAL_LINE: 3, Rocks.VERTICAL_LINE: 0, Rocks.STAR: 3, Rocks.SQUARE: 1,
-                    Rocks.INVERTED_L: 2}
-LEFT_PART_INDEX = {Rocks.HORIZONTAL_LINE: 0, Rocks.VERTICAL_LINE: 0, Rocks.STAR: 1, Rocks.SQUARE: 0,
-                   Rocks.INVERTED_L: 0}
+minus = [
+    list("####")
+]
+plus = [
+    list(".#."),
+    list("###"),
+    list(".#."),
+]
 
-ROCKS_CYCLE = [Rocks.HORIZONTAL_LINE, Rocks.STAR, Rocks.INVERTED_L, Rocks.VERTICAL_LINE, Rocks.SQUARE]
+l = [
+    list("..#"),
+    list("..#"),
+    list("###"),
+][::-1]
 
-JETS = {'<': Directions.LEFT, '>': Directions.RIGHT}
+eye = [
+    ["#"], ["#"], ["#"], ["#"]
+]
 
+square = [
+    list("##"),
+    list("##")
+]
 
-class FallingRock:
-    def __init__(self, shape, top_unoccupied):
-        self.shape = shape
-        self.coords = [coord[:] for coord in shape.value]
-
-        offset_up = abs(top_unoccupied) + 3
-
-        for coord in self.coords:
-            coord[0] -= offset_up
-
-    def __repr__(self):
-        return f'{self.shape} at coords {self.coords}'
-
-    def move(self, move_direction, occupied_spaces, left_border=0, right_border=6):
-        def occupied(candidate_coords, occupied_spaces):
-            return any(candidate in occupied_spaces for candidate in candidate_coords)
-
-        def on_border(direction):
-            if direction == Directions.RIGHT:
-                return self.coords[RIGHT_PART_INDEX[self.shape]][1] >= right_border
-            elif direction == Directions.LEFT:
-                return self.coords[LEFT_PART_INDEX[self.shape]][1] <= left_border
-
-        if move_direction == Directions.RIGHT:
-            candidate_coords = [(coord[0], coord[1] + 1) for coord in self.coords]
-            if occupied(candidate_coords, occupied_spaces) or on_border(move_direction):
-                return False
-            else:
-                for coord in self.coords:
-                    coord[1] += 1
-
-        elif move_direction == Directions.LEFT:
-            candidate_coords = [(coord[0], coord[1] - 1) for coord in self.coords]
-            if occupied(candidate_coords, occupied_spaces) or on_border(move_direction):
-                return False
-            else:
-                for coord in self.coords:
-                    coord[1] -= 1
-
-        elif move_direction == Directions.DOWN:
-            candidate_coords = [(coord[0] + 1, coord[1]) for coord in self.coords]
-            if occupied(candidate_coords, occupied_spaces):
-                return False
-            else:
-                for coord in self.coords:
-                    coord[0] += 1
-
-        return True
+shapes = [minus, plus, l, eye, square]
 
 
-class ElephantTetris:
-    def __init__(self, gas_jets):
-        self.occupied_spaces = set((1, i) for i in range(7))
-        self.top_unoccupied = self.update_top()
-        self.current_rock = None
-        self.rock_counter = 0
-        self.gas_jets = cycle(gas_jets)
-        self.total_gas_jets = len(gas_jets)
-        self.rocks_cycle = cycle(ROCKS_CYCLE)
-        self.horizontal_moves = 0
-        self.moves_to_rocks = {}
-        self.dejavus = ''
+class grid:
+    def __init__(self, pattern):
+        self.data = set()
+        self.top = 0
+        self.current_shape_idx = 0
+        self.shape_x = 2
+        self.shape_y = 3
+        self.settled = 0
+        self.pattern = pattern
+        self.pat_idx = 0
 
-    def update_top(self):
-        return min(i for i, j in self.occupied_spaces) - 1
+    def can_move_horizontal(self, direction):
+        if direction == "<":
+            nx = self.shape_x - 1
+        else:
+            nx = self.shape_x + 1
 
-    def drop_rock(self):
-        self.current_rock = FallingRock(next(self.rocks_cycle), self.top_unoccupied)
-        self.rock_counter += 1
-
-    def move_rock(self):
-        next_jet = next(self.gas_jets)
-        horizontal_move = JETS[next_jet]
-
-        self.horizontal_moves += 1
-        jet_id = self.horizontal_moves % self.total_gas_jets
-        # print(jet_id, horizontal_move, jet_id in self.moves_to_rocks)
-
-        if jet_id not in self.moves_to_rocks:
-            self.moves_to_rocks[jet_id] = self.current_rock.shape
-        elif self.moves_to_rocks[jet_id] == self.current_rock.shape:
-            self.dejavus += f'\nDEJA VU {jet_id} {self.current_rock} at {self.rock_counter}. Current height: {abs(self.top_unoccupied)}'
-            # this adds to a string that can be saved and visually scanned for repeating patterns...
-
-        pushed_by_jets = self.current_rock.move(horizontal_move, self.occupied_spaces)
-        moved_down = self.current_rock.move(Directions.DOWN, self.occupied_spaces)
-
-        # print(f'Pushed {horizontal_move}? {pushed_by_jets}')
-        # print(f'Moved down? {moved_down}')
-
-        if not moved_down:
-            for coord in self.current_rock.coords:
-                self.occupied_spaces.add(tuple(coord))
-            self.top_unoccupied = self.update_top()
-            self.current_rock = None
+        if nx in [-1, 7]:
             return False
+
+        for y, l in enumerate(shapes[self.current_shape_idx]):
+            for x, c in enumerate(l):
+                if c == "#":
+                    if (nx + x, self.shape_y + y) in self.data or nx + x > 6:
+                        return False
         return True
 
-    def play(self, rounds):
-        while self.rock_counter < rounds:
-            if not self.current_rock:
-                self.drop_rock()
-            while True:
-                move_done = self.move_rock()
-                if not move_done:
-                    break
+    def can_move_down(self):
+        ny = self.shape_y - 1
+
+        if ny < 0:
+            return False
+
+        for y, l in enumerate(shapes[self.current_shape_idx]):
+            for x, c in enumerate(l):
+                if c == "#":
+                    if (self.shape_x + x, ny + y) in self.data:
+                        return False
+        return True
+
+    def move(self):
+        direction = self.pattern[self.pat_idx % len(self.pattern)]
+        self.pat_idx = self.pat_idx + 1
+
+        if self.can_move_horizontal(direction):
+            if direction == "<":
+                self.shape_x -= 1
+            else:
+                self.shape_x += 1
+
+        if self.can_move_down():
+            self.shape_y -= 1
+        else:
+            return True
+
+        return False
+
+    def drop(self):
+        while True:
+            ret = self.move()
+            if ret:
+                break
+
+        self.draw()
+
+    def get_top(self):
+        return max(c[1] for c in self.data)
+
+    def draw(self):
+        for y, l in enumerate(shapes[self.current_shape_idx]):
+            for x, c in enumerate(l):
+                if c == "#":
+                    self.data.add((self.shape_x + x, self.shape_y + y))
+
+        self.settled += 1
+        self.top = self.get_top()
+        self.current_shape_idx = (self.current_shape_idx + 1) % 5
+        self.shape_x = 2
+        self.shape_y = self.top + 3 + 1
+
+    def plot(self):
+        buff = []
+        for y in range(100):
+            st = ""
+            for x in range(7):
+                st += "#" if (x, y) in self.data else "."
+            buff.append(st)
+
+        for l in buff[::-1]:
+            print(l)
+
+    def find_pattern(self):
+        states = defaultdict(list)
+        heights = {}
+
+        while True:
+            self.drop()
+            top = self.get_top()
+
+            heights[self.settled] = top + 1
+
+            if all((x, top) in self.data for x in range(7)):
+                s = (self.pat_idx % len(self.pattern), self.current_shape_idx)
+                states[s].append(self.settled)
+                if len(states[s]) == 2:
+                    return states[s], heights
 
 
-jets = '>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>'
+@profiler
+def part1():
+    g = grid(open("input#17.txt").read())
 
-print('Testing...')
-g = ElephantTetris(jets)
-g.play(2022)
-part1 = abs(g.top_unoccupied)
+    for _ in range(2022):
+        g.drop()
 
-with open('input#17.txt', mode='r') as inp:
+    print(g.get_top() + 1)
 
-    data = inp.read()
-    real_game = ElephantTetris(data)
-    real_game.play(2022)
-    part2 = abs(real_game.top_unoccupied)
-    print(f'Part 1: {part1}\t|\tPart 2: {part2}')
+
+@profiler
+def part2():
+    g = grid(open("input#17.txt").read())
+
+    pt, heights = g.find_pattern()
+
+    extra_rocks = (1000000000000 - max(pt)) % (max(pt) - min(pt))
+    extra_height = heights[min(pt) + extra_rocks] - heights[min(pt)]
+
+    cycles = (1000000000000 - min(pt)) // (max(pt) - min(pt))
+    cycle_height = heights[max(pt)] - heights[min(pt)]
+
+    initial_height = heights[min(pt)]
+
+    print(initial_height + cycles * cycle_height + extra_height)
+
+
+if __name__ == "__main__":
+
+    part1()
+    part2()
