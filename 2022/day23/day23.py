@@ -66,4 +66,4 @@ directions = [[(-1, -1), (0, -1), (1, -1)], [(1, 1), (0, 1), (-1, 1)], [(-1, 1),
               [(1, -1), (1, 0), (1, 1)]]
 omni_elf = [(-1, -1), (0, -1), (1, -1), (1, 1), (0, 1), (-1, 1), (-1, 0), (1, 0)]
 
-print("Part 1: {}\t|\tPart 2: {}".format(solve_part_1(), solve_part_2()))
+print(f"Part 1: {solve_part_1()}\nPart 2: {solve_part_2()}")
