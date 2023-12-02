@@ -11,8 +11,7 @@ def process_input():
     pass
     
 if __name__ == "__main__":
-    # Read input
-    input_data = input()
+   
 
     # Process and output result
     print("Solution:", process_input())
