@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Function to get the current year and day
+get_current_year_day() {
+    year=$(date +"%Y")
+    day=$(date +"%d")
+    echo $year $day
+}
+
+# Function to run the solution
+run_solution() {
+    year=$1
+    day=$2
+    input_type=$3
+
+    solution_path="$(pwd)/$year/day$(printf "%02d" $day)/solution.py"
+    input_file="$(pwd)/$year/day$(printf "%02d" $day)/${input_type}.txt"
+
+    if [[ -f "$solution_path" && -f "$input_file" ]]; then
+        python "$solution_path" < "$input_file"
+    else
+        echo "Solution or input file not found for Day $day, Year $year. Will try to download it now."
+        python "$(pwd)/download_input.py" $year $day
+        echo "Downloaded input file. Now running solution."
+        python "$solution_path" < "$input_file"
+    fi
+}
+
+# Main script logic
+if [[ $1 == "test" ]]; then
+    input_type="test"
+else
+    input_type="in"
+fi
+
+read year day <<< $(get_current_year_day)
+run_solution $year $day $input_type

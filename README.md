@@ -18,5 +18,5 @@ cd /YYYY/dayXX/
 Then, you can run the solutions with the following command:
 
 ```bash
-python3 dayXX.py
+python3 solution.py < in.txt
 ```
