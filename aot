@@ -21,12 +21,12 @@ run_solution() {
     else
         echo "Solution or input file not found for Day $day, Year $year. Will try to download it now."
         python "$(pwd)/download_input.py" $year $day
-        echo "Downloaded input file. Now running solution."
+        echo "Downloaded input files. Now running solution."
         python "$solution_path" < "$input_file"
     fi
 }
 
-input_type="in"
+input_type="test"
 
 read year day <<< $(get_current_year_day)
 run_solution $year $day $input_type
