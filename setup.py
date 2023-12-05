@@ -2,7 +2,7 @@ from datetime import datetime
 from create import create_solution_template  # Import the function
 
 def setup_year(year):
-    for day in range(1, 26):
+    for day in range(6, 26):
         create_solution_template(year, day)
 
 if __name__ == "__main__":

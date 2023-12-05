@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 def download_input(year, day):
-    session_cookie = os.getenv("AOC_SESSION_COOKIE")
+    session_cookie = os.getenv("AOC_SESSION")
     if not session_cookie:
         raise ValueError("Session cookie not set in environment variables")
 

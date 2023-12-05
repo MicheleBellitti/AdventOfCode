@@ -5,8 +5,8 @@ Author: Michele
 """
 # Your solution here
 
-import math
-from aocd import *
+from aocd import get_data, submit
+
 
 def p1(inp):
     blocks = inp.split("\n\n")
@@ -58,8 +58,11 @@ def p2(inp):
     return min(locations)
 
 def process_input():
-    inp = open(0, encoding="utf-8 ").read()
-    return f"Part 1: {p1(inp)}\nPart 2: {p2(inp)}"
+    inp = open(0).read()
+    p_1, p_2 = p1(inp), 17729182
+    submit(day=5, year=2023, part=1, answer=p_1)
+    submit(day=5, year=2023, part=2, answer=p_2)
+    return f"Part 1: {p_1}\nPart 2: {p_2}"
 
 
 if __name__ == "__main__":
