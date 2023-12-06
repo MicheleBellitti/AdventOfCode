@@ -4,12 +4,28 @@ Welcome to my Advent of Code solutions repository! This repository contains my s
 
 ## Directory Structure
 
-The repository is organized by year, with each year having its own directory. Inside each year's directory, you will find the solutions to the puzzles for that specific year. 
+The repository is organized by year, with each year having its own directory. Inside each year's directory, you will find the solutions to the puzzles for that specific year.
 
 ## Usage
 
 To run the solutions, you need to have Python 3.10 installed.
-First, choose a year and a day and change into the directory for that year and day. 
+To install it:
+
+- On Windows, you can download it from [here](https://www.python.org/downloads/windows/).
+- On Linux, you can run the following commands:
+
+```bash
+sudo apt-get update
+sudo apt-get install python3.6
+```
+
+- On MacOS, you can use [Homebrew](https://brew.sh/):
+
+```bash
+brew install python@3.10
+```
+
+Then, choose a year and a day and change into the directory for that year and day.
 
 ```bash
 cd /YYYY/dayXX/
@@ -34,8 +50,9 @@ aoi
 ```
 
 or
-    
-    ```bash
-    aot
-    ```
+
+```bash
+aot
+```
+
 For testing it on a smaller input.
