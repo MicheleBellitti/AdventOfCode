@@ -9,10 +9,16 @@ The repository is organized by year, with each year having its own directory. In
 ## Usage
 
 To run the solutions, you need to have Python 3.10 installed.
-First, choose a year and a day and change into the directory for that year and day. For example, if you want to run the solutions for 2022's day 1, you would run the following:
+First, choose a year and a day and change into the directory for that year and day. 
 
 ```bash
 cd /YYYY/dayXX/
+```
+
+For example, if you want to run the solutions for 2022's day 1, you would run the following:
+
+```bash
+cd /2022/day01/
 ```
 
 Then, you can run the solutions with the following command:
@@ -20,3 +26,16 @@ Then, you can run the solutions with the following command:
 ```bash
 python3 solution.py < in.txt
 ```
+
+In addition, you can run the daily solution by running:
+
+```bash
+aoi
+```
+
+or
+    
+    ```bash
+    aot
+    ```
+For testing it on a smaller input.
