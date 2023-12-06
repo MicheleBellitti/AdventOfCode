@@ -28,6 +28,7 @@ if __name__ == "__main__":
         year, day = int(sys.argv[1]), int(sys.argv[2])
     else:
         # get them from the current date
-        year, day = datetime.now().year, datetime.now().day
+        year, day = 2023, 5 #datetime.now().year, datetime.now().day
+        
     
     download_input(year, day)

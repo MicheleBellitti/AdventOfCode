@@ -24,8 +24,8 @@ def p1(inp):
         for line in maps:
             for ind in range(0, len(line), 3):
                 dst, src, size = line[ind], line[ind + 1], line[ind + 2]
-                if loc in range(src, src + size):
-                    loc = dst + (loc - src)
+                if src <= loc < src + size:
+                    loc = loc + dst - src
                     break # correct mapping found
         locations.append(loc)
     return min(locations)
@@ -50,7 +50,7 @@ def p2(inp):
             for line in maps:
                 for ind in range(0, len(line), 3):
                     dst, src, size = line[ind], line[ind + 1], line[ind + 2]
-                    if loc in range(src, src + size):
+                    if dst <= loc < dst + size:
                         loc = dst + (loc - src)
                         break  # Break the loop once the correct mapping is found
             locations.append(loc)
@@ -60,8 +60,8 @@ def p2(inp):
 def process_input():
     inp = open(0).read()
     p_1, p_2 = p1(inp), 17729182
-    submit(day=5, year=2023, part=1, answer=p_1)
-    submit(day=5, year=2023, part=2, answer=p_2)
+    submit(day=5, year=2023, part='a', answer=p_1)
+    submit(day=5, year=2023, part='b', answer=p_2)
     return f"Part 1: {p_1}\nPart 2: {p_2}"
 
 
