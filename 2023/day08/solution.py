@@ -7,6 +7,9 @@ import math
 import os
 from datetime import datetime
 from aocd import get_data, submit
+import utils
+from utils.advent import check_setup_once, log, logcont, check_or_die, setup, suppress
+
 
 
 def explore(start, graph, instructions):
@@ -66,6 +69,7 @@ if __name__ == "__main__":
     y = datetime.now().year
     d = 8
     
+    setup(y, d)
     # Process and output result
     print("Solution:", process_input(y, d))
 

@@ -15,6 +15,7 @@ Author: {author}
 import os
 from datetime import datetime
 from aocd import get_data, submit
+from utils.advent import *
 
 # Solution here
 
@@ -38,7 +39,9 @@ def process_input(year, day):
 if __name__ == "__main__":
     
     y = datetime.now().year
-    d = int(input("Enter the day: "))
+    d = {day}
+    
+    setup(y, d)
     
     # Process and output result
     print("Solution:", process_input(y, d))
