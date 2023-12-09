@@ -28,13 +28,13 @@ brew install python@3.10
 Then, choose a year and a day and change into the directory for that year and day.
 
 ```bash
-cd /YYYY/dayXX/
+cd YYYY/dayXX/
 ```
 
 For example, if you want to run the solutions for 2022's day 1, you would run the following:
 
 ```bash
-cd /2022/day01/
+cd 2022/day01/
 ```
 
 Then, you can run the solutions with the following command:
